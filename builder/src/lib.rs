@@ -29,13 +29,54 @@ pub fn derive(input: TokenStream) -> TokenStream {
         }
     });
 
+    let builder_init = fields.iter().map(|f| {
+        let name = &f.ident;
+
+        quote! {
+            #name: None
+        }
+    });
+
+    let setters = fields.iter().map(|f| {
+        let name = &f.ident;
+        let ty = &f.ty;
+
+        quote! {
+            pub fn #name(&mut self, #name: #ty) -> &mut Self {
+                self.#name = Some(#name);
+                self
+            }
+        }
+    });
+
+    let build_fields = fields.iter().map(|f| {
+        let name = &f.ident;
+
+        quote! {
+            #name: self.#name.clone().ok_or(concat!(stringify!(#name), " not set"))?
+        }
+    });
+
     let code = quote! {
         pub struct #bid {
            #(#builder_fields,)*
         }
 
+        impl #bid {
+            #(#setters)*
+
+            pub fn build(&self) -> std::result::Result<#name, std::boxed::Box<dyn std::error::Error>> {
+                std::result::Result::Ok(#name {
+                    #(#build_fields,)*
+                })
+            }
+        }
+
         impl #name {
-            pub fn builder() -> () {
+            pub fn builder() -> #bid {
+                #bid {
+                    #(#builder_init,)*
+                }
             }
         }
     };
