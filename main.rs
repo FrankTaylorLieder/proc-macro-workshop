@@ -12,9 +12,9 @@ fn main() {
     #[derive(Builder)]
     pub struct Command {
         executable: String,
-        #[builder(optional, each("arg"))]
+        #[builder(optional, each(arg))]
         args: Vec<String>,
-        #[builder(each("env"))]
+        #[builder(each(env))]
         env: Vec<String>,
         #[builder(optional)]
         current_dir: Option<String>,

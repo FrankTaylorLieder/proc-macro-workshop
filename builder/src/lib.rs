@@ -149,8 +149,8 @@ fn get_options(f: &syn::Field) -> Options {
                 if m.path.is_ident("each") {
                     let content;
                     parenthesized!(content in m.input);
-                    let lit: LitStr = content.parse()?;
-                    options.each = Some(syn::Ident::new(lit.value().as_str(), lit.span()));
+                    let lit: syn::Ident = content.parse()?;
+                    options.each = Some(lit);
                     return Ok(());
                 }
 
