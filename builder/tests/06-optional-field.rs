@@ -59,6 +59,7 @@ pub struct Command {
     executable: String,
     args: Vec<String>,
     env: Vec<String>,
+    #[builder(optional)]
     current_dir: Option<String>,
 }
 
@@ -75,7 +76,7 @@ fn main() {
         .executable("cargo".to_owned())
         .args(vec!["build".to_owned(), "--release".to_owned()])
         .env(vec![])
-        .current_dir("..".to_owned())
+        .current_dir(Some("..".to_owned()))
         .build()
         .unwrap();
     assert!(command.current_dir.is_some());
